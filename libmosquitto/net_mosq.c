@@ -65,7 +65,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef WITH_TLS
 #include <openssl/err.h>
-#include <tls_mosq.h>
+#include "tls_mosq.h"
 #endif
 
 #ifdef WITH_BROKER
@@ -79,7 +79,7 @@ POSSIBILITY OF SUCH DAMAGE.
    extern unsigned long g_pub_msgs_sent;
 #  endif
 #else
-#  include <read_handle.h>
+#  include "read_handle.h"
 #endif
 
 #include "logging_mosq.h"
