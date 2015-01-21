@@ -162,6 +162,10 @@ static void on_unsubscribe(struct mosquitto *mosq, void *obj, int message_id)
     }
 }
 
+static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str)
+{
+    LogDebug(@"MOSQUITTO: Level %d: %@",level,[[NSString alloc] initWithCString:str encoding:NSUTF8StringEncoding]);
+}
 
 // Initialize is called just before the first object is allocated
 + (void)initialize {
@@ -189,6 +193,7 @@ static void on_unsubscribe(struct mosquitto *mosq, void *obj, int message_id)
         self.reconnectDelay = 1;
         self.reconnectDelayMax = 1;
         self.reconnectExponentialBackoff = NO;
+//        self.tlsInsecure = YES;
 
         self.subscriptionHandlers = [[NSMutableDictionary alloc] init];
         self.unsubscriptionHandlers = [[NSMutableDictionary alloc] init];
@@ -204,6 +209,7 @@ static void on_unsubscribe(struct mosquitto *mosq, void *obj, int message_id)
         mosquitto_message_callback_set(mosq, on_message);
         mosquitto_subscribe_callback_set(mosq, on_subscribe);
         mosquitto_unsubscribe_callback_set(mosq, on_unsubscribe);
+        mosquitto_log_callback_set(mosq,on_log);
 
         self.queue = dispatch_queue_create(cstrClientId, NULL);
     }
@@ -249,6 +255,7 @@ static void on_unsubscribe(struct mosquitto *mosq, void *obj, int message_id)
     }
     // add tls insecure set
     mosquitto_tls_insecure_set(mosq, self.tlsInsecure);
+    mosquitto_tls_opts_set(mosq,0,"tlsv1",nil);
 
     mosquitto_connect(mosq, cstrHost, self.port, self.keepAlive);
     
