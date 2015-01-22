@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010-2014 Roger Light <roger@atchoo.org>
+Copyright (c) 2010-2013 Roger Light <roger@atchoo.org>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -64,8 +64,8 @@ extern "C" {
 #endif
 
 #define LIBMOSQUITTO_MAJOR 1
-#define LIBMOSQUITTO_MINOR 3
-#define LIBMOSQUITTO_REVISION 5
+#define LIBMOSQUITTO_MINOR 2
+#define LIBMOSQUITTO_REVISION 3
 /* LIBMOSQUITTO_VERSION_NUMBER looks like 1002001 for e.g. version 1.2.1. */
 #define LIBMOSQUITTO_VERSION_NUMBER (LIBMOSQUITTO_MAJOR*1000000+LIBMOSQUITTO_MINOR*1000+LIBMOSQUITTO_REVISION)
 
@@ -117,8 +117,7 @@ struct mosquitto;
 
 /*
  * Topic: Threads
- *	libmosquitto provides thread safe operation, with the exception of
- *	<mosquitto_lib_init> which is not thread safe.
+ *	libmosquitto provides thread safe operation. 
  */
 /***************************************************
  * Important note
@@ -168,8 +167,6 @@ libmosq_EXPORT int mosquitto_lib_version(int *major, int *minor, int *revision);
  * Function: mosquitto_lib_init
  *
  * Must be called before any other mosquitto functions.
- *
- * This function is *not* thread safe.
  *
  * Returns:
  * 	MOSQ_ERR_SUCCESS - always
@@ -453,42 +450,6 @@ libmosq_EXPORT int mosquitto_connect_async(struct mosquitto *mosq, const char *h
  * 	<mosquitto_connect_async>, <mosquitto_connect>, <mosquitto_connect_bind>
  */
 libmosq_EXPORT int mosquitto_connect_bind_async(struct mosquitto *mosq, const char *host, int port, int keepalive, const char *bind_address);
-
-/*
- * Function: mosquitto_connect_srv
- *
- * Connect to an MQTT broker. This is a non-blocking call. If you use
- * <mosquitto_connect_async> your client must use the threaded interface
- * <mosquitto_loop_start>. If you need to use <mosquitto_loop>, you must use
- * <mosquitto_connect> to connect the client.
- *
- * This extends the functionality of <mosquitto_connect_async> by adding the
- * bind_address parameter. Use this function if you need to restrict network
- * communication over a particular interface. 
- *
- * May be called before or after <mosquitto_loop_start>.
- *
- * Parameters:
- * 	mosq -         a valid mosquitto instance.
- * 	host -         the hostname or ip address of the broker to connect to.
- * 	keepalive -    the number of seconds after which the broker should send a PING
- *                 message to the client if no other messages have been exchanged
- *                 in that time.
- *  bind_address - the hostname or ip address of the local network interface to
- *                 bind to.
- *
- * Returns:
- * 	MOSQ_ERR_SUCCESS - on success.
- * 	MOSQ_ERR_INVAL -   if the input parameters were invalid.
- * 	MOSQ_ERR_ERRNO -   if a system call returned an error. The variable errno
- *                     contains the error code, even on Windows.
- *                     Use strerror_r() where available or FormatMessage() on
- *                     Windows.
- *
- * See Also:
- * 	<mosquitto_connect_async>, <mosquitto_connect>, <mosquitto_connect_bind>
- */
-libmosq_EXPORT int mosquitto_connect_srv(struct mosquitto *mosq, const char *host, int keepalive, const char *bind_address);
 
 /*
  * Function: mosquitto_reconnect
@@ -1295,13 +1256,13 @@ libmosq_EXPORT void mosquitto_user_data_set(struct mosquitto *mosq, void *obj);
 
 /* =============================================================================
  *
- * Section: Utility functions
+ * Utility functions
  *
  * =============================================================================
  */
 
 /*
- * Function: mosquitto_strerror
+ * Function mosquitto_strerror
  *
  * Call to obtain a const string description of a mosquitto error number.
  *
@@ -1314,7 +1275,7 @@ libmosq_EXPORT void mosquitto_user_data_set(struct mosquitto *mosq, void *obj);
 libmosq_EXPORT const char *mosquitto_strerror(int mosq_errno);
 
 /*
- * Function: mosquitto_connack_string
+ * Function mosquitto_connack_string
  *
  * Call to obtain a const string description of an MQTT connection result.
  *
@@ -1327,7 +1288,7 @@ libmosq_EXPORT const char *mosquitto_strerror(int mosq_errno);
 libmosq_EXPORT const char *mosquitto_connack_string(int connack_code);
 
 /*
- * Function: mosquitto_sub_topic_tokenise
+ * Function mosquitto_sub_topic_tokenise
  *
  * Tokenise a topic or subscription string into an array of strings
  * representing the topic hierarchy.
@@ -1382,7 +1343,7 @@ libmosq_EXPORT const char *mosquitto_connack_string(int connack_code);
 libmosq_EXPORT int mosquitto_sub_topic_tokenise(const char *subtopic, char ***topics, int *count);
 
 /*
- * Function: mosquitto_sub_topic_tokens_free
+ * Function mosquitto_sub_topic_tokens_free
  *
  * Free memory that was allocated in <mosquitto_sub_topic_tokenise>.
  *
@@ -1400,7 +1361,7 @@ libmosq_EXPORT int mosquitto_sub_topic_tokenise(const char *subtopic, char ***to
 libmosq_EXPORT int mosquitto_sub_topic_tokens_free(char ***topics, int count);
 
 /*
- * Function: mosquitto_topic_matches_sub
+ * Function mosquitto_topic_matches_sub
  *
  * Check whether a topic matches a subscription.
  *

@@ -85,7 +85,7 @@ time_t mosquitto_time(void)
 	if(tb.denom == 0){
 		mach_timebase_info(&tb);
 	}
-	sec = ticks*tb.numer/tb.denom/1000000000;
+	sec = (ticks/1000000000)*(tb.numer/tb.denom);
 
 	return (time_t)sec;
 #else
