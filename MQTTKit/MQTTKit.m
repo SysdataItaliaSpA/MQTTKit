@@ -10,7 +10,7 @@
 #import "MQTTKit.h"
 #import "mosquitto.h"
 
-#if 0 // set to 1 to enable logs
+#if 1 // set to 1 to enable logs
 
 #define LogDebug(frmt, ...) NSLog(frmt, ##__VA_ARGS__);
 
@@ -92,9 +92,9 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
     MQTTClient* client = (__bridge MQTTClient*)obj;
     LogDebug(@"[%@] on_disconnect rc = %d", client.clientID, rc);
-    [client.publishHandlers removeAllObjects];
-    [client.subscriptionHandlers removeAllObjects];
-    [client.unsubscriptionHandlers removeAllObjects];
+//    [client.publishHandlers removeAllObjects];
+//    [client.subscriptionHandlers removeAllObjects];
+//    [client.unsubscriptionHandlers removeAllObjects];
 
     client.connected = NO;
     if (client.disconnectionHandler) {
@@ -216,6 +216,14 @@ static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str
     return self;
 }
 
+- (void) destroy
+{
+    if (mosq) {
+        mosquitto_destroy(mosq);
+        mosq = NULL;
+    }
+}
+
 - (void) setMaxInflightMessages:(NSUInteger)maxInflightMessages
 {
     mosquitto_max_inflight_messages_set(mosq, (unsigned int)maxInflightMessages);
@@ -226,11 +234,9 @@ static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str
     mosquitto_message_retry_set(mosq, (unsigned int)seconds);
 }
 
-- (void) dealloc {
-    if (mosq) {
-        mosquitto_destroy(mosq);
-        mosq = NULL;
-    }
+- (void) dealloc
+{
+    [self destroy];
 }
 
 #pragma mark - Connection
@@ -255,7 +261,7 @@ static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str
     }
     // add tls insecure set
     mosquitto_tls_insecure_set(mosq, self.tlsInsecure);
-    mosquitto_tls_opts_set(mosq,0,"tlsv1",nil);
+    mosquitto_tls_opts_set(mosq,1,"tlsv1",nil);
 
     mosquitto_connect(mosq, cstrHost, self.port, self.keepAlive);
     

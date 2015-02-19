@@ -147,10 +147,10 @@ void _mosquitto_messages_reconnect_reset(struct mosquitto *mosq)
 		message->timestamp = 0;
 		if(message->direction == mosq_md_out){
 			mosq->queue_len++;
-			if(message->msg.qos > 0){
-				mosq->inflight_messages++;
-			}
 			if(mosq->max_inflight_messages == 0 || mosq->inflight_messages < mosq->max_inflight_messages){
+                if(message->msg.qos > 0){
+                    mosq->inflight_messages++;
+                }
 				if(message->msg.qos == 1){
 					message->state = mosq_ms_wait_for_puback;
 				}else if(message->msg.qos == 2){

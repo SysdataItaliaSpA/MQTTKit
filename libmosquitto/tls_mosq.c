@@ -59,35 +59,6 @@ int _mosquitto_server_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx)
 
 	/* Always reject if preverify_ok has failed. */
 	if(!preverify_ok) return 0;
-    {
-        char buf[256];
-        int err, depth;
-        cert = X509_STORE_CTX_get_current_cert(ctx);
-        err = X509_STORE_CTX_get_error(ctx);
-        depth = X509_STORE_CTX_get_error_depth(ctx);
-        X509_NAME_oneline(X509_get_subject_name(cert), buf, 256);
-
-        ssl = X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
-        long result = SSL_get_verify_result(ssl);
-
-        X509 *brokerCert = SSL_get_peer_certificate(ssl);
-
-        const char *dir;
-
-        dir = getenv(X509_get_default_cert_dir_env());
-
-        if (!dir)
-            dir = X509_get_default_cert_dir();
-
-        printf("verify error:num=%d:%s:depth=%d:%s\n", err,
-               X509_verify_cert_error_string(err), depth, buf);
-        //return 0;
-
-        if (err == 18)
-        {
-            return 1;
-        }
-    }
 
 	ssl = X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
 	mosq = SSL_get_ex_data(ssl, tls_ex_index_mosq);
