@@ -261,7 +261,14 @@ static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str
     }
     // add tls insecure set
     mosquitto_tls_insecure_set(mosq, self.tlsInsecure);
-    mosquitto_tls_opts_set(mosq,1,"tlsv1",nil);
+    if (self.tlsInsecure)
+    {
+        mosquitto_tls_opts_set(mosq,1,"tlsv1",nil);
+    }
+    else
+    {
+        mosquitto_tls_opts_set(mosq,1,"tlsv1.2",nil);
+    }
 
     mosquitto_connect(mosq, cstrHost, self.port, self.keepAlive);
     
