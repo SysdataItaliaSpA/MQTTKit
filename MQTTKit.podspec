@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = "http://github.com/jmesnil/MQTTKit"
   s.license      = { :type => 'Apache License, Version 2.0', :file => 'LICENSE' }
   s.author       = { "Jeff Mesnil" => "jmesnil@gmail.com" }
-  s.ios.platform = :ios, '6.0'
+  s.platform = :ios, '7.0'
   # for using GCD queue as Objective-C objects
   s.ios.deployment_target = "6.0"
   s.osx.platform = :osx, '10.9'
